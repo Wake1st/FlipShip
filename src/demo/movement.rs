@@ -4,13 +4,14 @@ pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_plugins();
+        app.insert_resource(MovementState(MovementType::AllAxisSnap));
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MovementType {
     AllAxisSnap,
-    SideSlide,
+    SmoothSlide,
     ForwardFlying,
     FreeFlying,
     RolyPoly,
@@ -19,3 +20,6 @@ pub enum MovementType {
     Sailing,
     TunnelTwist,
 }
+
+#[derive(Resource, Debug)]
+pub struct MovementState(pub MovementType);

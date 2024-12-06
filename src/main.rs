@@ -1,7 +1,5 @@
 use bevy::prelude::*;
-use lib::AppPlugin;
-
-mod lib;
+use flip_ship::AppPlugin;
 
 fn main() {
     App::new()
