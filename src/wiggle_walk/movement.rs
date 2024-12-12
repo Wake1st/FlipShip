@@ -47,7 +47,7 @@ fn animate_walking(
 ) {
     //  store horizontal movement of foot
     let horizontal_translation = feet_movement.moving * LEG_LENGTH;
-    let om_normal = feet_movement.om_normal();
+    let om_normal = (feet_movement.moving - feet_movement.stable).normalize();
 
     //  store leg rotation values
     let mut torso_translation_delta: Vec3;
@@ -67,7 +67,7 @@ fn animate_walking(
         torso_transform.translation += torso_translation_delta;
 
         //  rotate
-        let y_pivot = calculate_y_rotation(torso_transform.FORWARD, om_normal);
+        let y_pivot = calculate_y_rotation(torso_transform.forward(), om_normal);
         torso_transform.rotate_around(y_pivot, Vec3::UP);
     }
 
@@ -82,14 +82,14 @@ fn animate_walking(
 
         if leg.left {
             leg_transform.translation += calculate_translation(left_motion_arm, LEG_LENGTH);
-            leg_transform.rotate_around(torso_translation_delta, Vec3::FORWARD);
+            leg_transform.rotate_around(torso_translation_delta, -Vec3::Z);
         } else {
             leg_transform.translation += calculate_translation(right_motion_arm, LEG_LENGTH);
-            leg_transform.rotate_around(torso_translation_delta, Vec3::FORWARD);
+            leg_transform.rotate_around(torso_translation_delta, -Vec3::Z);
         }
 
         //  rotation
-        let y_pivot = calculate_y_rotation(leg_transform.FORWARD, om_normal);
+        let y_pivot = calculate_y_rotation(leg_transform.forward(), om_normal);
         leg_transform.rotate_around(y_pivot, Vec3::UP);
     }
 }
@@ -106,9 +106,9 @@ fn calculate_translation(horizontal_motion_arm: f32, vertical_motion_arm: f32) -
         horizontal_translation.x * 0.5,
         vertical_translation,
         -horizontal_translation.z * 0.5,
-    );
+    )
 }
 
 fn calculate_y_rotation(forward: Vec3, normal: Vec2) -> f32 {
-    Vec2::new(-om_normal.y, om_normal.x, 0.0) - forward
+    Vec3::new(-om_normal.y, om_normal.x, 0.0).angle_between(forward)
 }

@@ -1,3 +1,5 @@
+use bevy::prelude::*;
+
 pub const FOOT_TORSO_LENGTH: f32 = 10.0;
 pub const TORSO_HIP_LENGTH: f32 = 5.0;
 pub const LEG_LENGTH: f32 = 5.0;
@@ -31,10 +33,4 @@ pub struct FeetMovement {
     pub moving: Vec2,
     pub stable: Vec2,
     pub left: bool,
-}
-
-impl FeetMovement {
-    fn om_normal(&self) -> Vec2 {
-        (self.moving - self.stable).normalize()
-    }
 }
