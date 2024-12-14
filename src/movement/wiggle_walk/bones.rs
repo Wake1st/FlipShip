@@ -1,16 +1,13 @@
 use bevy::prelude::*;
 
 pub const FOOT_TORSO_LENGTH: f32 = 10.0;
-pub const TORSO_HIP_LENGTH: f32 = 5.0;
 pub const LEG_LENGTH: f32 = 5.0;
 pub const NEAR_FOOT_MOTION_ARM: f32 = 0.25;
 pub const FAR_FOOT_MOTION_ARM: f32 = 0.75;
 pub const TORSO_MOTION_ARM: f32 = 0.5;
 
 #[derive(Component)]
-pub struct Hip {
-    pub left: bool,
-}
+pub struct Torso {}
 
 #[derive(Component)]
 pub struct Foot {

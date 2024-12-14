@@ -8,7 +8,7 @@ pub mod constants;
 pub mod controls;
 pub mod direction;
 pub mod movement;
-mod ship;
+pub mod ship;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((ShipPlugin, MovementPlugin, ControlsPlugin, DirectionPlugin));
