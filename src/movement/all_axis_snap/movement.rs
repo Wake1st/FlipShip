@@ -6,7 +6,10 @@ use crate::demo::{
     ship::Ship,
 };
 
-use super::bones::{AllAxisDirection, ALL_AXIS_SNAP_TRANSLATION_SPEED, QUARTER_TURN_ROTATION};
+use super::bones::{
+    AllAxisDirection, ALL_AXIS_SNAP_ROTATION_DURATION, ALL_AXIS_SNAP_TRANSLATION_SPEED,
+    QUARTER_TURN_ROTATION,
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
@@ -75,14 +78,14 @@ fn process_movement(
             //	store time change
             let delta_time = time.delta_secs();
 
-            //	translation
-            transform.translation +=
-                Vec3::new(direction.sideways, direction.updown, -direction.frontback)
-                    * ALL_AXIS_SNAP_TRANSLATION_SPEED
-                    * delta_time;
+            let duration = ALL_AXIS_SNAP_ROTATION_DURATION;
+            let time_margin = 0.5;
+            let now = ((time.elapsed_secs() % (duration + time_margin * 2.0) - time_margin)
+                / duration)
+                .clamp(0.0, 1.0);
 
-            //	rotation - HOW THE FUCK DO CURVES WORK?
-            EasingCurve::new(
+            //	rotation - not sure if this works, but it's worth a try
+            let curve_x = EasingCurve::new(
                 transform.rotation,
                 transform.rotation.rotate_towards(
                     Quat::from_rotation_x(direction.pitch * QUARTER_TURN_ROTATION),
@@ -90,7 +93,7 @@ fn process_movement(
                 ),
                 EaseFunction::BackOut,
             );
-            EasingCurve::new(
+            let curve_y = EasingCurve::new(
                 transform.rotation,
                 transform.rotation.rotate_towards(
                     Quat::from_rotation_y(direction.yaw * QUARTER_TURN_ROTATION),
@@ -98,7 +101,7 @@ fn process_movement(
                 ),
                 EaseFunction::BackOut,
             );
-            EasingCurve::new(
+            let curve_z = EasingCurve::new(
                 transform.rotation,
                 transform.rotation.rotate_towards(
                     Quat::from_rotation_z(direction.roll * QUARTER_TURN_ROTATION),
@@ -106,9 +109,19 @@ fn process_movement(
                 ),
                 EaseFunction::BackOut,
             );
-            transform.rotate_local_x(direction.pitch * QUARTER_TURN_ROTATION);
-            transform.rotate_local_y(direction.yaw * QUARTER_TURN_ROTATION);
-            transform.rotate_local_z(-direction.roll * QUARTER_TURN_ROTATION);
+            transform.rotate(curve_x.sample(now).unwrap());
+            transform.rotate(curve_y.sample(now).unwrap());
+            transform.rotate(curve_z.sample(now).unwrap());
+            // transform.rotate_local_x(direction.pitch * QUARTER_TURN_ROTATION);
+            // transform.rotate_local_y(direction.yaw * QUARTER_TURN_ROTATION);
+            // transform.rotate_local_z(-direction.roll * QUARTER_TURN_ROTATION);
+
+            //	translation
+            let rotation = transform.rotation;
+            transform.translation += rotation
+                * Vec3::new(direction.sideways, direction.updown, -direction.frontback)
+                * ALL_AXIS_SNAP_TRANSLATION_SPEED
+                * delta_time;
         }
     }
 }

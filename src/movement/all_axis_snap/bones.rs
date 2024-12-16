@@ -3,6 +3,7 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 
 pub const ALL_AXIS_SNAP_TRANSLATION_SPEED: f32 = 1.0;
+pub const ALL_AXIS_SNAP_ROTATION_DURATION: f32 = 1.5;
 pub const QUARTER_TURN_ROTATION: f32 = PI / 2.0;
 
 ///    Component assumes a positive forward, positive right, and positive up axis
