@@ -27,7 +27,6 @@ fn track_input(controller: Res<Controller>, mut tank_base: Query<&mut TankBase>)
     }
 }
 
-///    TODO: should add a Player component to specify what we are controlling
 fn move_tank(
     tank_base: Query<&TankBase>,
     mut player: Query<&mut Transform, With<Ship>>,
